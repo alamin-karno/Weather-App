@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Please enter any city name", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    getWeatherDetails(searchString);
+                    getWeatherCityDetails(searchString);
                 }
             }
         });
@@ -147,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
                 city = fullCity.substring(0,fullCity.indexOf(' '));
 
                 if(city.isEmpty()){
-                    getWeatherDetails("Dhaka");
+                    getWeatherCityDetails("Dhaka");
                 }
                 else{
-                    getWeatherDetails(city);
+                    getWeatherCityDetails(city);
                 }
             }
             catch (Exception e){
@@ -182,9 +182,9 @@ public class MainActivity extends AppCompatActivity {
                     city = fullCity.substring(0, fullCity.indexOf(' '));
 
                     if (city.isEmpty()) {
-                        getWeatherDetails("Dhaka");
+                        getWeatherCityDetails("Dhaka");
                     } else {
-                        getWeatherDetails(city);
+                        getWeatherCityDetails(city);
                     }
 
                 } catch (Exception e) {
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
         return cityName;
     }
 
-    private void getWeatherDetails(String city) {
+    private void getWeatherCityDetails(String city) {
 
         loading.setVisibility(View.VISIBLE);
 

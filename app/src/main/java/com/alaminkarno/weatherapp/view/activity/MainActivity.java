@@ -6,11 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,10 +30,14 @@ import com.alaminkarno.weatherapp.model.Weather;
 import com.alaminkarno.weatherapp.request.RetrofitService;
 import com.alaminkarno.weatherapp.request.WeatherApi;
 import com.alaminkarno.weatherapp.response.WeatherResponse;
+import com.alaminkarno.weatherapp.view.utils.Credential;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
     private Button searchBTN;
     private String searchString;
     private String temp,pressure,maxTemp,
-            minTemp,windSpeed,humidity,city;
+            minTemp,windSpeed,humidity,city,bg,
+            state,feelTemp,cityName,time;
+
+    private SharedPreferences sharedpreferences;
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
@@ -61,7 +71,14 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
-        getRetrofitLocationResponse();
+
+
+        if(isOnline()){
+            getRetrofitLocationResponse();
+        }
+        else{
+            setDataFromOffline();
+        }
 
 
         searchBTN.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +95,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setDataFromOffline() {
+
+        temp = sharedpreferences.getString(Credential.TEMP,"0");
+        maxTemp = sharedpreferences.getString(Credential.MAX_TEMP,"0 °C");
+        minTemp = sharedpreferences.getString(Credential.MIN_TEMP,"0 °C");
+        feelTemp = sharedpreferences.getString(Credential.FEEL_TEMP,"0 °C");
+        windSpeed = sharedpreferences.getString(Credential.WIND_SPEED,"0 km/h");
+        pressure = sharedpreferences.getString(Credential.PRESSURE,"0 mmHg");
+        humidity = sharedpreferences.getString(Credential.HUMIDITY,"0%");
+        cityName = sharedpreferences.getString(Credential.CITY_NAME,"null");
+        state = sharedpreferences.getString(Credential.STATE,"");
+        bg = sharedpreferences.getString(Credential.BACKGROUND_IMAGE,"clear");
+        time = sharedpreferences.getString(Credential.TIME,"00:00 am");
+
+        setWeatherIntoScreen();
+
+    }
+
+    private boolean isOnline() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
     private void getRetrofitLocationResponse() {
@@ -197,11 +240,12 @@ public class MainActivity extends AppCompatActivity {
                      List<LocationModel> locationModels = new ArrayList<>(response.body());
 
                      if(locationModels.size() > 0){
-                         locationTV.setText(locationModels.get(0).getTitle());
+                         cityName = locationModels.get(0).getTitle();
                          getRetrofitWeatherResponse(locationModels.get(0).getWoeid());
                      }
                      else{
                          locationTV.setText("Dhaka");
+                         cityName = "Dhaka";
                          getRetrofitWeatherResponse(1915035);
                      }
 
@@ -231,29 +275,23 @@ public class MainActivity extends AppCompatActivity {
 
                 if(response.code() == 200){
 
-                    loading.setVisibility(View.INVISIBLE);
-
                     Weather weather = response.body().getWeather();
 
                     Log.d("weather: ","Temp: "+weather.getTheTemp());
 
                     temp = (String) DECIMAL_FORMAT.format(weather.getTheTemp());
-                    tempTV.setText(temp);
-                    maxTemp = (String) DECIMAL_FORMAT.format(weather.getMaxTemp());
-                    maxTempTV.setText(maxTemp+" °C");
-                    minTemp = (String) DECIMAL_FORMAT.format(weather.getMinTemp());
-                    minTempTv.setText(minTemp+" °C");
-                    feelTempTv.setText(temp+" °C");
-                    pressure = (String) DECIMAL_FORMAT.format(weather.getAirPressure());
-                    pressureTv.setText(pressure+" mmHg");
-                    windSpeed = (String) DECIMAL_FORMAT.format(weather.getWindSpeed());
-                    windSpeedTv.setText(windSpeed+" km/h");
-                    humidity = (String) DECIMAL_FORMAT.format(weather.getHumidity());
-                    humidityTV.setText(humidity+"%");
-                    String bg = weather.getWeatherStateName().replaceAll(" ","").toLowerCase();
-                    setBackground(bg);
-                    weatherStateTV.setText(weather.getWeatherStateName());
+                    maxTemp = (String) DECIMAL_FORMAT.format(weather.getMaxTemp())+" °C";
+                    minTemp = (String) DECIMAL_FORMAT.format(weather.getMinTemp())+" °C";
+                    feelTemp = temp+" °C";
+                    pressure = (String) DECIMAL_FORMAT.format(weather.getAirPressure())+" mmHg";
+                    windSpeed = (String) DECIMAL_FORMAT.format(weather.getWindSpeed())+" km/h";
+                    humidity = (String) DECIMAL_FORMAT.format(weather.getHumidity())+"%";
+                    bg = weather.getWeatherStateName().replaceAll(" ","").toLowerCase();
+                    state = weather.getWeatherStateName();
 
+                    setWeatherIntoScreen();
+
+                    setSharePreferenceData();
 
                 }
 
@@ -267,6 +305,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setWeatherIntoScreen() {
+        locationTV.setText(cityName);
+        tempTV.setText(temp);
+        maxTempTV.setText(maxTemp);
+        minTempTv.setText(minTemp);
+        feelTempTv.setText(feelTemp);
+        pressureTv.setText(pressure);
+        windSpeedTv.setText(windSpeed);
+        humidityTV.setText(humidity);
+        setBackground(bg);
+        weatherStateTV.setText(state);
+
+        loading.setVisibility(View.INVISIBLE);
+    }
+
+    private void setSharePreferenceData() {
+
+        Date d=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        time = sdf.format(d);
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(Credential.TEMP,temp);
+        editor.putString(Credential.MAX_TEMP,maxTemp+" °C");
+        editor.putString(Credential.MIN_TEMP,minTemp+" °C");
+        editor.putString(Credential.FEEL_TEMP,temp+" °C");
+        editor.putString(Credential.PRESSURE,pressure+" mmHg");
+        editor.putString(Credential.WIND_SPEED,windSpeed+" km/h");
+        editor.putString(Credential.HUMIDITY,humidity+"%");
+        editor.putString(Credential.BACKGROUND_IMAGE,bg);
+        editor.putString(Credential.STATE,state);
+        editor.putString(Credential.CITY_NAME,cityName);
+        editor.putString(Credential.TIME,time);
+        editor.commit();
     }
 
     private void setBackground(String bg) {
@@ -323,14 +397,23 @@ public class MainActivity extends AppCompatActivity {
 
         searchET = findViewById(R.id.searchET);
         searchBTN = findViewById(R.id.searchBTN);
+
+        sharedpreferences = getSharedPreferences(Credential.PREFERENCE, Context.MODE_PRIVATE);
     }
 
     public void refreshMyLocation(View view) {
 
-        getLocation();
+        if(isOnline()){
+            getLocation();
+        }
+        else{
+            Toast.makeText(this, "Please connect internet first", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     public void sideMenu(View view) {
-        Toast.makeText(this, "Under Development...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Last Weather Updated: "+time, Toast.LENGTH_SHORT).show();
     }
 }

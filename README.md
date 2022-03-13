@@ -9,19 +9,19 @@ https://terabox.com/s/1xoif6SHcq025PImbFryV2A
 
 ### 01. APP UI
 
-<img src="screenshots/screenshot.png" width="250">
+<img src="screenshots/screenshot.jpg" width="250">
 
 ### 02. APP UI
 
-<img src="screenshots/screenshot1.png" width="250">
+<img src="screenshots/screenshot1.jpg" width="250">
 
 ### 03. APP UI
 
-<img src="screenshots/screenshot2.png" width="250">
+<img src="screenshots/screenshot2.jpg" width="250">
 
 ### 04. APP UI
 
-<img src="screenshots/screenshot3.png" width="250">
+<img src="screenshots/screenshot3.jpg" width="250">
 
 ### Disclaimer
 This project is made only for educational purpose. Anyone can use it but the risk has to be taken by the user.

@@ -1,5 +1,5 @@
 # Weather App
-This is an weather app where I have use retrofit for collecting data via API. All weather information is automatically updated from https://www.metaweather.com/ site. 
+This is an weather app where I have use retrofit for collecting data via API. All weather information is automatically updated from https://www.metaweather.com/ site. Work fine in offline If you just connect this app internet first time. Also you can check the last updated time of weather info.
 
 ## Download APK:
 

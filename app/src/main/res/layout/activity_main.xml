@@ -34,10 +34,10 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:onClick="sideMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:onClick="sideMenu"
             android:src="@drawable/ic_baseline_more_vert_24" />
 
     </RelativeLayout>

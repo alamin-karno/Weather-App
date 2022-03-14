@@ -330,12 +330,12 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(Credential.TEMP,temp);
-        editor.putString(Credential.MAX_TEMP,maxTemp+" °C");
-        editor.putString(Credential.MIN_TEMP,minTemp+" °C");
-        editor.putString(Credential.FEEL_TEMP,temp+" °C");
-        editor.putString(Credential.PRESSURE,pressure+" mmHg");
-        editor.putString(Credential.WIND_SPEED,windSpeed+" km/h");
-        editor.putString(Credential.HUMIDITY,humidity+"%");
+        editor.putString(Credential.MAX_TEMP,maxTemp);
+        editor.putString(Credential.MIN_TEMP,minTemp);
+        editor.putString(Credential.FEEL_TEMP,temp);
+        editor.putString(Credential.PRESSURE,pressure);
+        editor.putString(Credential.WIND_SPEED,windSpeed);
+        editor.putString(Credential.HUMIDITY,humidity);
         editor.putString(Credential.BACKGROUND_IMAGE,bg);
         editor.putString(Credential.STATE,state);
         editor.putString(Credential.CITY_NAME,cityName);
@@ -344,38 +344,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBackground(String bg) {
-        if(bg.equals("clear")){
-            mainBackground.setBackgroundResource(R.drawable.clear);
-        }
-        else if(bg.equals("hail")){
-            mainBackground.setBackgroundResource(R.drawable.hail);
-        }
-        else if(bg.equals("heavycloud")){
-            mainBackground.setBackgroundResource(R.drawable.heavycloud);
-        }
-        else if(bg.equals("heavyrain")){
-            mainBackground.setBackgroundResource(R.drawable.heavyrain);
-        }
-        else if(bg.equals("lightcloud")){
-            mainBackground.setBackgroundResource(R.drawable.lightcloud);
-        }
-        else if(bg.equals("lightrain")){
-            mainBackground.setBackgroundResource(R.drawable.lightrain);
-        }
-        else if(bg.equals("showers")){
-            mainBackground.setBackgroundResource(R.drawable.showers);
-        }
-        else if(bg.equals("sky")){
-            mainBackground.setBackgroundResource(R.drawable.sky);
-        }
-        else if(bg.equals("sleet")){
-            mainBackground.setBackgroundResource(R.drawable.sleet);
-        }
-        else if(bg.equals("snow")){
-            mainBackground.setBackgroundResource(R.drawable.snow);
-        }
-        else if(bg.equals("thunderstorm")){
-            mainBackground.setBackgroundResource(R.drawable.thunderstorm);
+        switch (bg) {
+            case "clear":
+                mainBackground.setBackgroundResource(R.drawable.clear);
+                break;
+            case "hail":
+                mainBackground.setBackgroundResource(R.drawable.hail);
+                break;
+            case "heavycloud":
+                mainBackground.setBackgroundResource(R.drawable.heavycloud);
+                break;
+            case "heavyrain":
+                mainBackground.setBackgroundResource(R.drawable.heavyrain);
+                break;
+            case "lightcloud":
+                mainBackground.setBackgroundResource(R.drawable.lightcloud);
+                break;
+            case "lightrain":
+                mainBackground.setBackgroundResource(R.drawable.lightrain);
+                break;
+            case "showers":
+                mainBackground.setBackgroundResource(R.drawable.showers);
+                break;
+            case "sky":
+                mainBackground.setBackgroundResource(R.drawable.sky);
+                break;
+            case "sleet":
+                mainBackground.setBackgroundResource(R.drawable.sleet);
+                break;
+            case "snow":
+                mainBackground.setBackgroundResource(R.drawable.snow);
+                break;
+            case "thunderstorm":
+                mainBackground.setBackgroundResource(R.drawable.thunderstorm);
+                break;
         }
     }
 
